@@ -1,0 +1,21 @@
+{
+  "name": "ethicai-usb",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MVP de EthicAI USB: Atrapa la alucinación, Tutor socrático y Autodiagnóstico",
+  "scripts": {
+    "postinstall": "npm install --prefix server && npm install --prefix client",
+    "dev": "concurrently -n servidor,cliente -c cyan,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build": "npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "test": "npm test --prefix server && npm test --prefix client",
+    "check:ollama": "npm run check:ollama --prefix server",
+    "eval:tutor": "npm run eval:tutor --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=18.18"
+  }
+}
