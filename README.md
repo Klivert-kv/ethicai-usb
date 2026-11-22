@@ -34,7 +34,7 @@ npm install
 
 `npm install` instala también las dependencias de `server/` y `client/`.
 
-## 3. Comprobar la integración con Ollama (1 minuto)
+## 3. Comprobar la conexión con el modelo (1 minuto)
 
 ```powershell
 npm run check:ollama
@@ -64,7 +64,7 @@ Abre **<http://localhost:3001>**. Un solo proceso sirve la API y la aplicación.
 ## 5. Pruebas
 
 ```powershell
-npm test            # 36 pruebas del backend + 16 del frontend (no necesitan Ollama)
+npm test            # 51 pruebas del backend + 16 del frontend (no necesitan internet ni la clave)
 npm run eval:tutor  # pruebas representativas del comportamiento pedagógico con el modelo REAL
 ```
 
@@ -89,7 +89,7 @@ npm run eval:tutor  # pruebas representativas del comportamiento pedagógico con
 | `OLLAMA_TIMEOUT_MS` | `90000` | Tiempo máximo por respuesta |
 | `TUTOR_RATE_LIMIT_PER_MINUTE` | `20` | Mensajes al tutor por minuto y por equipo |
 
-**Autenticación cloud:** la app no maneja credenciales. Ollama usa la sesión iniciada con `ollama signin`. Si la sesión no existe o caducó, el tutor muestra el aviso "Ejecuta ollama signin".
+**Autenticación cloud:** la clave de Groq va solo en el archivo `.env`; nunca se sube a Git ni llega al navegador. Si falta o es incorrecta, el tutor muestra el aviso "Revisa LLM_API_KEY".
 
 **Compatibilidad de `think`:** si tu versión de Ollama rechazara el parámetro `think` con HTTP 400, el backend reintenta una vez sin él y con el mismo modelo. También puedes dejar `OLLAMA_THINK=` vacío.
 
@@ -102,10 +102,10 @@ Navegador (React + Vite)
 Backend (Node.js + Express)  ── valida, limita, agrega el prompt socrático
    │  POST /api/chat  (stream: false)
    ▼
-Ollama local (localhost:11434) ──► nube de Ollama (gpt-oss:20b)
+Groq (nube gratuita, gpt-oss-20b)
 ```
 
-- El navegador **nunca** habla directo con Ollama: el prompt de sistema queda en el servidor y el estudiante no puede modificarlo.
+- El navegador **nunca** habla directo con el modelo: el prompt de sistema queda en el servidor y el estudiante no puede modificarlo.
 - El laboratorio y el autodiagnóstico corren solo en el navegador con datos locales; siguen funcionando aunque el modelo falle.
 
 ```
@@ -181,7 +181,7 @@ La penalización evita que marcar todo dé ventaja (marcar todas las frases nunc
 - Las respuestas del modelo se muestran **sin HTML crudo** (sin `dangerouslySetInnerHTML`); el código del modelo solo se muestra, nunca se ejecuta.
 - No hay base de datos ni cuentas. Conversación, resultados y respuestas viven solo en la pestaña del navegador y se pierden al recargar.
 - El servidor registra solo códigos de error, nunca el contenido de las conversaciones.
-- **Importante:** como el modelo es cloud, los mensajes del tutor salen del equipo hacia la nube de Ollama. La interfaz lo indica.
+- **Importante:** como el modelo es cloud, los mensajes del tutor salen del equipo hacia la nube de Groq. La interfaz lo indica.
 
 ## 11. Pruebas realizadas (entorno de desarrollo)
 
@@ -192,11 +192,11 @@ La penalización evita que marcar todo dé ventaja (marcar todas las frases nunc
   - **11/11** de menú móvil y teclado: abre, ocupa la pantalla, navega, se cierra al navegar y con Escape; el foco recorre el header; «Explorar las herramientas» desplaza a la sección.
   - **6/6** de estados de error: Ollama apagado (mensaje claro, texto conservado, Reintentar, sin respuesta inventada, laboratorio operativo) y sesión cloud ausente (indica `ollama signin`).
   - Sin desbordamiento horizontal en móvil en las cuatro pantallas.
-- **Pendiente en tu equipo:** la respuesta real de `gpt-oss:20b-cloud` desde la interfaz. El entorno de desarrollo no tiene acceso a tu Ollama local. Verifícala con `npm run check:ollama` y enviando una pregunta en el tutor.
+- **Con el modelo real (22/11/2026, Groq `openai/gpt-oss-20b`):** `npm run check:ollama` conecta correctamente, `npm run eval:tutor` pasa **9/9** y 10 preguntas seguidas responden en **0,71 s** de promedio (máximo 1,23 s).
 
 ## 12. Limitaciones conocidas
 
-- El tutor depende de internet y de la cuota del plan gratuito de Ollama Cloud.
+- El tutor depende de internet y de los límites del plan gratuito de Groq (peticiones por minuto y por día).
 - El prompt y el nivel de pista orientan al modelo, pero **no garantizan** al 100 % que nunca entregue una solución.
 - Contenido fijo: 3 retos y 5 preguntas.
 - Sin streaming: la respuesta aparece completa (puede tardar algunos segundos).
@@ -218,7 +218,12 @@ La penalización evita que marcar todo dé ventaja (marcar todas las frases nunc
 4. **Autodiagnóstico (30 s):** responde rápido, marca "Seguro" en una que falles y muestra la alerta de exceso de confianza.
 5. **Cierre (10 s):** "No somos Turnitin. No castigamos el uso de la IA: enseñamos a usarla bien."
 
-**Antes de presentar:** abre Ollama, ejecuta `npm run check:ollama` (también "calienta" el modelo), usa `npm run build` + `npm start` y no gastes la cuota con muchas pruebas.
+**Antes de presentar:**
+
+1. Revisa que la clave de Groq esté en `LLM_API_KEY` del `.env`.
+2. Ejecuta `npm run check:ollama` (debe terminar en «Integración correcta»).
+3. Usa `npm run build` + `npm start`.
+4. Abre http://localhost:3001 y haz una pregunta de prueba al tutor.
 
 ## 15. Rediseño visual (dirección de arte)
 
@@ -244,9 +249,9 @@ La penalización evita que marcar todo dé ventaja (marcar todas las frases nunc
 
 | Síntoma | Solución |
 | --- | --- |
-| "Ollama no responde" | Abre la aplicación de Ollama (icono en la barra de tareas). |
-| "Ejecuta ollama signin" | `ollama signin` en una terminal y vuelve a intentar. |
-| "Modelo no registrado" | `ollama list` debe mostrar `gpt-oss:20b-cloud`; si no, `ollama pull gpt-oss:20b-cloud`. |
+| "El modelo no responde" | Revisa la conexión a internet y vuelve a intentar. |
+| "Revisa LLM_API_KEY" | La clave de Groq falta o está mal copiada en el `.env`. Crea una en console.groq.com/keys. |
+| "Se agotó la cuota" | Límite del plan gratuito; espera unos minutos y reintenta. |
 | "Límite de uso del modelo" | Cuota del plan gratuito; espera y reintenta. |
 | Puerto 3001 o 5173 ocupado | Cambia `PORT` en `.env` o cierra el otro proceso. |
 | `npm` no se reconoce | Reinstala Node.js y abre una terminal nueva. |
