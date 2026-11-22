@@ -6,16 +6,11 @@
  * garantiza el cumplimiento absoluto de las reglas. Revisa también las respuestas a mano.
  */
 import { loadConfig } from '../src/config.js';
-import { createOllamaClient } from '../src/services/ollamaService.js';
+import { createLlmClient } from '../src/services/llmClient.js';
 import { buildSystemPrompt } from '../src/prompts/tutorSystemPrompt.js';
 
 const config = loadConfig();
-const client = createOllamaClient({
-  baseUrl: config.ollamaBaseUrl,
-  model: config.ollamaModel,
-  think: config.ollamaThink,
-  timeoutMs: config.ollamaTimeoutMs,
-});
+const client = createLlmClient(config);
 
 const codeLines = (t) => {
   const blocks = t.match(/```[\s\S]*?```/g) || [];

@@ -12,7 +12,7 @@ app.listen(config.port, () => {
   console.log('  EthicAI USB — servidor iniciado');
   console.log(`  API:     http://localhost:${config.port}/api/health`);
   if (servesClient) console.log(`  App:     http://localhost:${config.port}  (modo demostración)`);
-  console.log(`  Modelo:  ${config.ollamaModel} vía ${config.ollamaBaseUrl}`);
+  console.log(`  Modelo:  ${config.model} vía ${config.llmProvider === 'openai' ? config.llmBaseUrl : config.ollamaBaseUrl}`);
   console.log(`  Razonamiento interno (think): ${config.ollamaThink || 'predeterminado'} — nunca se muestra al estudiante`);
   console.log('');
 });

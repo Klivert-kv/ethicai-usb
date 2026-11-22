@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import express from 'express';
 import cors from 'cors';
-import { createOllamaClient } from './services/ollamaService.js';
+import { createLlmClient } from './services/llmClient.js';
 import { createTutorController } from './controllers/tutorController.js';
 import { createTutorRouter } from './routes/tutorRoutes.js';
 import { createRateLimiter } from './middleware/rateLimit.js';
@@ -15,14 +15,7 @@ export function createApp(config, { ollamaClient } = {}) {
   const app = express();
   app.disable('x-powered-by');
 
-  const ollama =
-    ollamaClient ||
-    createOllamaClient({
-      baseUrl: config.ollamaBaseUrl,
-      model: config.ollamaModel,
-      think: config.ollamaThink,
-      timeoutMs: config.ollamaTimeoutMs,
-    });
+  const ollama = ollamaClient || createLlmClient(config);
 
   app.use((_req, res, next) => {
     res.set('X-Content-Type-Options', 'nosniff');
@@ -35,7 +28,7 @@ export function createApp(config, { ollamaClient } = {}) {
   app.use('/api', express.json({ limit: '64kb' }));
 
   app.get('/api/health', (_req, res) => {
-    res.json({ status: 'ok', model: config.ollamaModel });
+    res.json({ status: 'ok', model: config.model });
   });
 
   const controller = createTutorController(ollama);

@@ -4,24 +4,20 @@
  *   npm run check:ollama
  */
 import { loadConfig } from '../src/config.js';
-import { createOllamaClient, OllamaError } from '../src/services/ollamaService.js';
+import { OllamaError } from '../src/services/ollamaService.js';
+import { createLlmClient } from '../src/services/llmClient.js';
 import { buildSystemPrompt } from '../src/prompts/tutorSystemPrompt.js';
 
 const config = loadConfig();
-const client = createOllamaClient({
-  baseUrl: config.ollamaBaseUrl,
-  model: config.ollamaModel,
-  think: config.ollamaThink,
-  timeoutMs: config.ollamaTimeoutMs,
-});
+const client = createLlmClient(config);
 
-console.log(`\nComprobando ${config.ollamaModel} en ${config.ollamaBaseUrl} …`);
+console.log(`\nComprobando ${config.model} (${config.llmProvider}) …`);
 
 const status = await client.status();
-console.log(`  Ollama alcanzable: ${status.reachable ? 'sí' : 'NO'}`);
+console.log(`  Servicio alcanzable: ${status.reachable ? 'sí' : 'NO'}`);
 console.log(`  Modelo registrado: ${status.modelAvailable ? 'sí' : 'NO'}`);
 if (!status.reachable) {
-  console.log('\n  → Abre la aplicación de Ollama y vuelve a intentarlo.\n');
+  console.log('\n  → Revisa la conexión a internet (o abre Ollama si LLM_PROVIDER=ollama).\n');
   process.exit(1);
 }
 

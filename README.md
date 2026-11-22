@@ -10,7 +10,7 @@ El MVP incluye tres herramientas:
 | Herramienta | Qué hace | ¿Usa IA? |
 | --- | --- | --- |
 | **Atrapa la alucinación** | 3 retos con respuestas "de IA" que esconden 2–3 errores. El estudiante marca las frases falsas, ve las explicaciones y obtiene un puntaje. | No (funciona sin internet) |
-| **Tutor socrático** | Chat que guía con preguntas y pistas graduales en vez de resolver la tarea. | Sí: `gpt-oss:20b-cloud` vía Ollama |
+| **Tutor socrático** | Chat que guía con preguntas y pistas graduales en vez de resolver la tarea. | Sí: `openai/gpt-oss-20b` en Groq (plan gratuito) |
 | **Autodiagnóstico** | 5 preguntas con nivel de confianza, resultados por tema, qué repasar y una estimación opcional de hábitos de uso de la IA. | No |
 
 ---
@@ -19,8 +19,10 @@ El MVP incluye tres herramientas:
 
 - Windows 10/11
 - **Node.js 18.18 o superior** (recomendado 20 o 22 LTS) — <https://nodejs.org>
-- **Ollama** abierto, con sesión iniciada (`ollama signin`) y el modelo `gpt-oss:20b-cloud` registrado
-- Internet (el modelo se ejecuta en la nube de Ollama)
+- Una **clave gratuita de Groq** (<https://console.groq.com/keys>, *Create API Key*, no pide tarjeta), pegada en `LLM_API_KEY` del `.env`
+- Internet (el modelo se ejecuta en la nube de Groq)
+
+> Desde noviembre de 2026 los modelos cloud de Ollama son de pago (HTTP 402, bloqueo B-01). Groq ofrece el mismo `gpt-oss-20b` gratis. Para volver a Ollama: `LLM_PROVIDER=ollama`.
 
 ## 2. Instalación (PowerShell, una sola vez)
 
@@ -76,7 +78,12 @@ npm run eval:tutor  # pruebas representativas del comportamiento pedagógico con
 | --- | --- | --- |
 | `PORT` | `3001` | Puerto del backend |
 | `CLIENT_ORIGIN` | `http://localhost:5173` | Único origen permitido por CORS |
-| `OLLAMA_BASE_URL` | `http://localhost:11434` | API local de Ollama |
+| `LLM_PROVIDER` | `openai` | `openai` = Groq u otra API compatible con OpenAI; `ollama` = Ollama |
+| `LLM_BASE_URL` | `https://api.groq.com/openai/v1` | URL de la API |
+| `LLM_API_KEY` | (vacío) | Clave de Groq. Solo en `.env`, nunca en Git |
+| `LLM_MODEL` | `openai/gpt-oss-20b` | Modelo del tutor |
+| `LLM_REASONING_EFFORT` | `low` | Razonamiento interno; nunca se muestra |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | API local de Ollama (solo con `LLM_PROVIDER=ollama`) |
 | `OLLAMA_MODEL` | `gpt-oss:20b-cloud` | Modelo del tutor |
 | `OLLAMA_THINK` | `low` | Nivel de razonamiento interno de gpt-oss (`low`, `medium`, `high` o vacío). `low` responde más rápido. |
 | `OLLAMA_TIMEOUT_MS` | `90000` | Tiempo máximo por respuesta |
