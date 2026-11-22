@@ -65,7 +65,7 @@ export const HINT_LEVELS = [
     level: 4,
     nombre: 'Ejemplo análogo',
     instruccion:
-      'Nivel de ayuda 4 (ejemplo análogo): el bloqueo persiste. Resuelve paso a paso un ejemplo PARECIDO pero con datos o contexto diferentes, que enseñe el mismo procedimiento. No resuelvas el ejercicio original; al final invita al estudiante a aplicar el procedimiento a su caso.',
+      'Nivel de ayuda 4 (ejemplo análogo): el bloqueo persiste. Escribe «Ejemplo:» y resuelve COMPLETO, paso a paso, un ejercicio PARECIDO con datos o contexto diferentes, que enseñe el mismo procedimiento; si es de programación, incluye el código del ejemplo y su resultado. No te limites a listar pasos ni a hacer preguntas. No resuelvas el ejercicio original; al final invita al estudiante a aplicar el procedimiento a su caso.',
   },
 ];
 
