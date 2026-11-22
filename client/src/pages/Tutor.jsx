@@ -20,10 +20,10 @@ function StatusPill({ status, onCheck, checking }) {
       text = 'Servidor no disponible';
     } else if (!status.reachable) {
       tone = 'bad';
-      text = 'Ollama no responde';
+      text = 'El modelo no responde';
     } else if (!status.modelAvailable) {
       tone = 'warn';
-      text = 'Modelo no registrado en Ollama';
+      text = 'Modelo no disponible (revisa el .env)';
     } else {
       tone = 'ok';
       text = `Conectado · ${status.model}`;
@@ -273,7 +273,7 @@ export default function Tutor({ active }) {
               <Icon name="plus" size={16} /> Nueva conversación
             </button>
             <p className="small muted">
-              La conversación solo existe en esta pestaña. Los mensajes se envían al modelo en la nube de Ollama para
+              La conversación solo existe en esta pestaña. Los mensajes se envían a un modelo de IA en la nube para
               generar la respuesta.
             </p>
           </div>

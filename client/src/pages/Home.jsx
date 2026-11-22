@@ -84,7 +84,7 @@ function ToolStatus({ id, tutorStatus }) {
   return (
     <span className={`status-line ${ok ? 'tone-ok' : 'tone-bad'}`}>
       <span className="status-dot" aria-hidden="true" />
-      {ok ? `Conectado a ${tutorStatus.model}` : 'Sin conexión con Ollama en este momento'}
+      {ok ? `Conectado a ${tutorStatus.model}` : 'Sin conexión con el modelo en este momento'}
     </span>
   );
 }
