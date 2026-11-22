@@ -66,6 +66,14 @@ function mapHttpError(status, detail) {
       { httpStatus: 502, detail },
     );
   }
+  if (status === 402) {
+    // D-05: Ollama Cloud responde 402 cuando se acaban los créditos o el modelo requiere plan de pago.
+    return new OllamaError(
+      ERROR_CODES.REMOTE_RATE_LIMIT,
+      'Se agotaron los créditos del modelo en la nube. El laboratorio y el autodiagnóstico siguen funcionando.',
+      { httpStatus: 503, detail },
+    );
+  }
   if (status === 429) {
     return new OllamaError(
       ERROR_CODES.REMOTE_RATE_LIMIT,
